@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Using Perceptual Evaluation of Speech Quality (PESQ) Loss for DNN-Based Speech Enhancement | Listening
+        Examples</title>
+    <meta content="noindex" name="robots"/>
+    <script type="text/x-mathjax-config">
+	  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
+            type="text/javascript">
+    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+    <script src="scripts.js"></script>
+    <link href="style.css" rel="stylesheet">
+
+</head>
+
+</div>
+<div class="header">
+    <h1>Using Perceptual Evaluation of Speech Quality (PESQ) Loss for DNN-Based Speech Enhancement | Listening Examples</h1>
+    <a href="https://www.iks.rwth-aachen.de/en"><img alt="logo" src="iks-logo-en.svg"/></a>
+</div>
+
+<body onload="var select = document.querySelector('#selection_SNR'); var event = new Event('change'); select.dispatchEvent(event);">
+<p>This website serves as supplementary material to our work [7] submitted to the ITG Conference on Speech Communication 2023. Detailed information about the algorithms and data generation can be found in [7].</p>
+
+<p>We used speakers and noises from the corresponding test sets for all audio examples, i.e., both have not been seen
+    by the deep neural networks (DNNs) before. The clean speech signals were taken from the VCTK database [1] and the
+    noise signals from the ETSI database [2].</p>
+
+<p>The following methods were used to determine the estimated complex speech
+    spectrum $\hat{S}$:
+<ul>
+    <li>FCRN: Use the fully convolutional recurrent network as described in [3] for estimation of $\hat{S}_\text{Re}$
+        and $\hat{S}_\text{Im}$. Then use $\hat{S}=\hat{S}_\text{Re} + j \cdot \hat{S}_\text{Im}$.
+    </li>
+    <li>$\text{ETSSE}$: Use the phase-aware two-stage speech enhancement approach [4, 6] for separate estimation of
+        the magnitude spectrum $|\hat{S}|$ and our combined consistent-inconsistent phase
+        $\hat{\phi}_\text{CIP}$ by applying the supported magnitude-weighted average (SMWA) algorithm [5, 6] for phase reconstruction
+        from the estimated phase differences. Then use $\hat{S}=|\hat{S}| \cdot e^{j \cdot \hat{\phi}_\text{CIP}}$.
+    </li>
+    <li>Proposed $\text{PETSSE}_\text{-FEQ}$: Similar to $\text{ETSSE}$, but using the proposed modifications that enable joint optimization of the magnitude 
+		and phase estimates using PESQLoss with deactivated frequency equalization (FEQ) [7].
+    </li>
+    <li>Proposed $\text{PTSSE}_\text{-FEQ}$: Same as $\text{PETSSE}_\text{-FEQ}$, but without incorporating the estimation of $\hat{\phi}_\text{CIP}$ and instead using the noisy phase $\phi_Y$ for reconstruction [7].
+		Then use $\hat{S}=|\hat{S}| \cdot e^{j \cdot \phi_Y}$.
+    </li>
+    <li>Proposed $\text{PTSSE}$: Same as $\text{PTSSE}$, but using activated frequency equalization (FEQ) in the PESQLoss [7].
+    </li>
+</ul>
+Afterwards the estimated speech spectrum $\hat{S}$ is passed into an inverse short-time Fourier transform (ISTFT) in
+order to achieve the enhanced signal $\hat{s}$.
+It is worth noting that all models were trained using the same training set.</p>
+
+<p><b>Note: Please enable Javascript for this website to work properly. Supported browsers are Firefox (recommended) and
+    Chrome.</b></p>
+
+<br>
+<hr>
+<h2>
+    Clean speech
+    <select id="selection_Speech" style="width: 170px">
+        <option selected="selected" value="p226_203">p226_203</option>
+        <option value="p240_051">p240_051</option>
+        <option value="p240_237">p240_237</option>
+        <option value="p240_309">p240_309</option>
+        <option value="p245_017">p245_017</option>
+        <option value="p245_314">p245_314</option>
+        <option value="p248_211">p248_211</option>
+        <option value="p265_060">p265_060</option>
+        <option value="p272_029">p272_029</option>
+        <option value="p272_338">p272_338</option>
+    </select>
+    mixed with
+    <select id="selection_Noise" style="width: 180px">
+        <option selected="selected" value="Midsize_Car2_100Kmh_binaural ( 0.00-30.00 s)">Car</option>
+        <option value="Outside_Traffic_Crossroads_binaural ( 0.00-20.00 s)">Crossroads</option>
+        <option value="Work_Noise_Office_Callcener_binaural ( 0.00-30.00 s)">Office</option>
+        <option value="Pub_Noise_Binaural_V2">Pub</option>
+    </select>
+    noise at
+    <select id="selection_SNR">
+        <option selected="selected" value="0">0</option>
+        <option value="5">5</option>
+        <option value="10">10</option>
+    </select>
+    dB SNR
+</h2>
+
+<div class="center">
+    <div class="grid-container">
+        <div class="item1"></div>
+        <div class="item1">Clean</div>
+        <div class="item1">Noisy</div>
+        <div class="item1">FCRN</div>
+        <div class="item1">$\text{ETSSE}$</div>
+        <div class="item1">$\text{PTSSE}$</div>
+        <div class="item1">$\text{PTSSE}_\text{-FEQ}$</div>
+        <div class="item1">$\text{PETSSE}_\text{-FEQ}$</div>
+        <div class="item1"></div>
+        <div class="item1">
+            <audio controls id="player_Clean">
+                <source id="src_Clean"
+                        src="./Clean/p226_203_Midsize_Car2_100Kmh_binaural ( 0.00-30.00 s)_0dB_SNR.wav"
+                        type="audio/wav">
+                Your browser does not support the audio element.
+            </audio>
+        </div>
+        <div class="item1">
+            <audio controls="controls" id="player_Noisy">
+                <source id="src_Noisy" src="./Noisy/p226_203_Midsize_Car2_100Kmh_binaural ( 0.00-30.00 s)_0dB_SNR.wav"
+                        type="audio/wav">
+                Your browser does not support the audio element.
+            </audio>
+        </div>
+        <div class="item1">
+            <audio controls="controls" id="player_FCRN">
+                <source id="src_FCRN" src="./FCRN/p226_203_Midsize_Car2_100Kmh_binaural ( 0.00-30.00 s)_0dB_SNR.wav"
+                        type="audio/wav">
+                Your browser does not support the audio element.
+            </audio>
+        </div>
+        <div class="item1">
+            <audio controls="controls" id="player_ETSSE_SMWA">
+                <source id="src_ETSSE_SMWA"
+                        src="./ETSSE_SMWA/p226_203_Midsize_Car2_100Kmh_binaural ( 0.00-30.00 s)_0dB_SNR.wav"
+                        type="audio/wav">
+                Your browser does not support the audio element.
+            </audio>
+        </div>
+        <div class="item1">
+            <audio controls="controls" id="player_PTSSE_with_FEQ">
+                <source id="src_PTSSE_with_FEQ"
+                        src="./PTSSE_with_FEQ/p226_203_Midsize_Car2_100Kmh_binaural ( 0.00-30.00 s)_0dB_SNR.wav"
+                        type="audio/wav">
+                Your browser does not support the audio element.
+            </audio>
+        </div>
+        <div class="item1">
+            <audio controls="controls" id="player_PTSSE_without_FEQ">
+                <source id="src_PTSSE_without_FEQ"
+                        src="./PTSSE_without_FEQ/p226_203_Midsize_Car2_100Kmh_binaural ( 0.00-30.00 s)_0dB_SNR.wav"
+                        type="audio/wav">
+                Your browser does not support the audio element.
+            </audio>
+        </div>
+        <div class="item1">
+            <audio controls="controls" id="player_PETSSE_without_FEQ">
+                <source id="src_PETSSE_without_FEQ"
+                        src="./PETSSE_without_FEQ/p226_203_Midsize_Car2_100Kmh_binaural ( 0.00-30.00 s)_0dB_SNR.wav"
+                        type="audio/wav">
+                Your browser does not support the audio element.
+            </audio>
+        </div>
+
+        <div class="item1">PESQ</div>
+        <div class="item2">
+            <div id='PESQ_Clean'>-</div>
+        </div>
+        <div class="item2">
+            <div id='PESQ_Noisy'>-</div>
+        </div>
+        <div class="item2">
+            <div id='PESQ_FCRN'>-</div>
+        </div>
+        <div class="item2">
+            <div id='PESQ_ETSSE_SMWA'>-</div>
+        </div>
+        <div class="item2">
+            <div id='PESQ_PTSSE_with_FEQ'>-</div>
+        </div>
+        <div class="item2">
+            <div id='PESQ_PTSSE_without_FEQ'>-</div>
+        </div>
+        <div class="item2">
+            <div id='PESQ_PETSSE_without_FEQ'>-</div>
+        </div>
+
+        <div class="item1">STOI</div>
+        <div class="item2">
+            <div id='STOI_Clean'>-</div>
+        </div>
+        <div class="item2">
+            <div id='STOI_Noisy'>-</div>
+        </div>
+        <div class="item2">
+            <div id='STOI_FCRN'>-</div>
+        </div>
+        <div class="item2">
+            <div id='STOI_ETSSE_SMWA'>-</div>
+        </div>
+        <div class="item2">
+            <div id='STOI_PTSSE_with_FEQ'>-</div>
+        </div>
+        <div class="item2">
+            <div id='STOI_PTSSE_without_FEQ'>-</div>
+        </div>
+        <div class="item2">
+            <div id='STOI_PETSSE_without_FEQ'>-</div>
+        </div>
+
+        <div class="item1">$\text{SNR}_\text{seg}$</div>
+        <div class="item2">
+            <div id='SegSNR_Clean'>-</div>
+        </div>
+        <div class="item2">
+            <div id='SegSNR_Noisy'>-</div>
+        </div>
+        <div class="item2">
+            <div id='SegSNR_FCRN'>-</div>
+        </div>
+        <div class="item2">
+            <div id='SegSNR_ETSSE_SMWA'>-</div>
+        </div>
+        <div class="item2">
+            <div id='SegSNR_PTSSE_with_FEQ'>-</div>
+        </div>
+        <div class="item2">
+            <div id='SegSNR_PTSSE_without_FEQ'>-</div>
+        </div>
+        <div class="item2">
+            <div id='SegSNR_PETSSE_without_FEQ'>-</div>
+        </div>
+
+        <div class="item1">$\text{DNSMOS}_\text{ovrl}$</div>
+        <div class="item2">
+            <div id='DNSMOS_OVRL_Clean'>-</div>
+        </div>
+        <div class="item2">
+            <div id='DNSMOS_OVRL_Noisy'>-</div>
+        </div>
+        <div class="item2">
+            <div id='DNSMOS_OVRL_FCRN'>-</div>
+        </div>
+        <div class="item2">
+            <div id='DNSMOS_OVRL_ETSSE_SMWA'>-</div>
+        </div>
+        <div class="item2">
+            <div id='DNSMOS_OVRL_PTSSE_with_FEQ'>-</div>
+        </div>
+        <div class="item2">
+            <div id='DNSMOS_OVRL_PTSSE_without_FEQ'>-</div>
+        </div>
+        <div class="item2">
+            <div id='DNSMOS_OVRL_PETSSE_without_FEQ'>-</div>
+        </div>
+
+        <div class="item1">$\text{DNSMOS}_\text{sig}$</div>
+        <div class="item2">
+            <div id='DNSMOS_SIG_Clean'>-</div>
+        </div>
+        <div class="item2">
+            <div id='DNSMOS_SIG_Noisy'>-</div>
+        </div>
+        <div class="item2">
+            <div id='DNSMOS_SIG_FCRN'>-</div>
+        </div>
+        <div class="item2">
+            <div id='DNSMOS_SIG_ETSSE_SMWA'>-</div>
+        </div>
+        <div class="item2">
+            <div id='DNSMOS_SIG_PTSSE_with_FEQ'>-</div>
+        </div>
+        <div class="item2">
+            <div id='DNSMOS_SIG_PTSSE_without_FEQ'>-</div>
+        </div>
+        <div class="item2">
+            <div id='DNSMOS_SIG_PETSSE_without_FEQ'>-</div>
+        </div>
+
+        <div class="item1">$\text{DNSMOS}_\text{bak}$</div>
+        <div class="item2">
+            <div id='DNSMOS_BAK_Clean'>-</div>
+        </div>
+        <div class="item2">
+            <div id='DNSMOS_BAK_Noisy'>-</div>
+        </div>
+        <div class="item2">
+            <div id='DNSMOS_BAK_FCRN'>-</div>
+        </div>
+        <div class="item2">
+            <div id='DNSMOS_BAK_ETSSE_SMWA'>-</div>
+        </div>
+        <div class="item2">
+            <div id='DNSMOS_BAK_PTSSE_with_FEQ'>-</div>
+        </div>
+        <div class="item2">
+            <div id='DNSMOS_BAK_PTSSE_without_FEQ'>-</div>
+        </div>
+        <div class="item2">
+            <div id='DNSMOS_BAK_PETSSE_without_FEQ'>-</div>
+        </div>
+    </div>
+</div>
+
+<br>
+<hr>
+
+<h2>References</h2>
+[1] Christophe Veaux, Junichi Yamagishi, and Kirsten MacDonald, “CSTR VCTK corpus: English multi-speaker corpus for CSTR
+voice cloning toolkit,” 2017.<br>
+[2] “Speech processing, transmission and quality aspects (STQ); speech quality performance in the presence of background
+noise; part 1: Background noise simulation technique and background noise database,” ETSI EG 202 396-1, Sep. 2008.<br>
+[3] Maximilian Strake, Bruno Defraene, Kristoff Fluyt, Wouter Tirry, and Tim Fingscheidt, “Fully convolutional recurrent
+networks for speech enhancement,” in IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP),
+2020, pp. 6674–6678.<br>
+[4] Lars Thieling and Peter Jax, “Two-stage speech enhancement using gated convolutions,” in International Workshop on
+Acoustic Signal Enhancement (IWAENC), 2022, pp. 1-5.<br>
+[5] Lars Thieling, Daniel Wilhelm, and Peter Jax, “Recurrent phase reconstruction using estimated phase derivatives from
+deep neural networks,” in IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP), 2021, pp.
+7088–7092.<br>
+[6] Lars Thieling and Peter Jax, “Beyond clean phase: Using silence-generating phase for DNN-based speech enhancement,”
+in European Signal Processing Conference (EUSIPCO), 2023.<br>
+[7] Lars Thieling, Lars Nippert, and Peter Jax, “Using Perceptual Evaluation of Speech Quality (PESQ) Loss for DNN-Based Speech Enhancement,”
+(Submitted to ITG Conference on Speech Communication 2023).<br>
+</body>
+</html>
